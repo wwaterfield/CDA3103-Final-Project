@@ -1,0 +1,4 @@
+submissions/*
+!submissions/.keep
+project.c
+*.out
