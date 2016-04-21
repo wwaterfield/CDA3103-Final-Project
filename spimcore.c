@@ -1,4 +1,5 @@
 #include "spimcore.h"
+#include "project.c"
 
 #define MEMSIZE (65536 >> 2)
 #define REGSIZE 32
@@ -20,8 +21,8 @@ static unsigned Reg[REGSIZE + 4];
 
 const char RegName[REGSIZE + 4][6] = {
 	"$zero", "$at", "$v0", "$v1", "$a0", "$a1", "$a2", "$a3",
-	"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", 
-	"$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7", 
+	"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7",
+	"$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7",
 	"$t8", "$t9", "$k0", "$k1", "$gp", "$sp", "$fp", "$ra",
 	"$pc", "$stat", "$lo", "$hi" };
 
@@ -90,15 +91,15 @@ void Init(void)
 
 void DisplayControlSignals(void)
 {
-	fprintf(stdout, "\tControl Signals: %0x%0x%0x%0x%03x%0x%0x%0x%0x\n", 
-			controls.RegDst, 
-			controls.Jump, 
-			controls.Branch, 
-			controls.MemRead, 
-			controls.MemtoReg, 
-			controls.ALUOp, 
-			controls.MemWrite, 
-			controls.ALUSrc, 
+	fprintf(stdout, "\tControl Signals: %0x%0x%0x%0x%03x%0x%0x%0x%0x\n",
+			controls.RegDst,
+			controls.Jump,
+			controls.Branch,
+			controls.MemRead,
+			controls.MemtoReg,
+			controls.ALUOp,
+			controls.MemWrite,
+			controls.ALUSrc,
 			controls.RegWrite);
 }
 

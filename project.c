@@ -1,4 +1,6 @@
 #include "spimcore.h"
+#define MEMSIZE (65536 >> 2)
+
 /*
 Tyler did all of this
 */
@@ -14,7 +16,7 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
     *ALUresult = A + B;
   }
   else if(ALUControl == 1){ //Subtraction
-    *ALUresult = A - B
+    *ALUresult = A - B;
   }
   else if(ALUControl == 2){ //Set less than (signed)
     if((int)A < (int)B){ //Set to int so that it converts as signed binary
@@ -120,7 +122,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
       	controls->Branch = 0;
         controls->MemRead = 0;
         controls->MemtoReg = 0;
-        controls->ALUOp = 0x111;
+        controls->ALUOp = 7;
         controls->MemWrite = 0;
         controls->ALUSrc = 0;
         controls->RegWrite = 1;
@@ -180,7 +182,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
       	controls->Branch = 0;
         controls->MemRead = 0;
         controls->MemtoReg = 0;
-        controls->ALUOp = 0x110;
+        controls->ALUOp = 6;
         controls->MemWrite = 0;
         controls->ALUSrc = 1;
         controls->RegWrite = 1;
@@ -253,23 +255,23 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
       break;
       //sub
       case 34:
-      ALU(data1, data2, 0x001, ALUresult, Zero);
+      ALU(data1, data2, 1, ALUresult, Zero);
       break;
       //and
       case 36:
-      ALU(data1, data2, 0x100, ALUresult, Zero);
+      ALU(data1, data2, 4, ALUresult, Zero);
       break;
       //or
       case 37:
-      ALU(data1, data2, 0x101, ALUresult, Zero);
+      ALU(data1, data2, 5, ALUresult, Zero);
       break;
       //slt
       case 42:
-      ALU(data1, data2, 0x010, ALUresult, Zero);
+      ALU(data1, data2, 6, ALUresult, Zero);
       break;
       //sltu
       case 43:
-      ALU(data1, data2, 0x011, ALUresult, Zero);
+      ALU(data1, data2, 3, ALUresult, Zero);
       break;
       //other
       default: return 1;
@@ -280,31 +282,31 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
   {
     //addi
     case 0:
-    ALU(data1, extended_value, 0x000, ALUresult, Zero);
+    ALU(data1, extended_value, 0, ALUresult, Zero);
     break;
     //beq
     case 1:
-    ALU(data1, extended_value, 0x001, ALUresult, Zero);
+    ALU(data1, extended_value, 1, ALUresult, Zero);
     break;
     //slti
     case 2:
-    ALU(data1, extended_value, 0x010, ALUresult, Zero);
+    ALU(data1, extended_value, 2, ALUresult, Zero);
     break;
     //sltui
     case 3:
-    ALU(data1, extended_value, 0x011, ALUresult, Zero);
+    ALU(data1, extended_value, 3, ALUresult, Zero);
     break;
     //and
     case 4:
-    ALU(data1, extended_value, 0x100, ALUresult, Zero);
+    ALU(data1, extended_value, 4, ALUresult, Zero);
     break;
     //or
     case 5:
-    ALU(data1, extended_value, 0x101, ALUresult, Zero);
+    ALU(data1, extended_value, 5, ALUresult, Zero);
     break;
     //lui
     case 6:
-    ALU(data1, extended_value, 0x110, ALUresult, Zero);
+    ALU(data1, extended_value, 4, ALUresult, Zero);
     break;
     default: return 1;
   }
@@ -357,7 +359,7 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
   if(RegWrite){ //If RegWrite is 1, write to the register. If not, do nothing
 
       //If RegDest is 1, write to 15-11 (which is r3), else 20-16 (r2)
-    x = (RegDest) ? r3 : r2;
+    x = (RegDst) ? r3 : r2;
 
     if(MemtoReg){//If MemtoReg is 1, then read the data from memory
       Reg[x] = memdata;
@@ -380,3 +382,4 @@ void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char 
   	else if(Branch == 1 && Zero == 1)
       *PC = *PC + 4 + extended_value * 4;
     else *PC += 4;
+}
