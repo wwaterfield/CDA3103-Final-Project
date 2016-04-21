@@ -211,9 +211,9 @@ int instruction_decode(unsigned op,struct_controls *controls)
         controls->ALUSrc = 1;
         controls->RegWrite = 1;
     	break;
-    defualt: return 0;
+    defualt: return 1;
   }
-  return 1;
+  return 0;
 }
 
 /* Read Register */
